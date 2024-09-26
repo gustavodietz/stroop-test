@@ -14,13 +14,6 @@
 <script>
     console.log("Iniciando el test de Stroop");
 
-    // Verificar si jsPsych está cargado
-    if (typeof jsPsych !== 'undefined') {
-        console.log("jsPsych está disponible");
-    } else {
-        console.error("jsPsych no se ha cargado correctamente");
-    }
-
     // Definir los estímulos (palabras y colores)
     var stroop_trials = [
         { stimulus: 'Rojo', color: 'red', data: {correct_response: 'r'} },
@@ -37,7 +30,7 @@
         type: 'html-keyboard-response',
         stimulus: function() {
             var trial = jsPsych.timelineVariable('stimulus');
-            return '<div style="font-size: 40px; color:'+trial.color+';">'+trial.stimulus+'</div>';
+            return '<div style="font-size: 40px; color:'+jsPsych.timelineVariable('color', true)+';">'+trial+'</div>';
         },
         choices: ['r', 'g', 'b', 'y'],
         data: function() {
@@ -74,7 +67,6 @@
 
     timeline.push(display_results);
 
-    // Inicializar jsPsych
     jsPsych.init({
         timeline: timeline,
         on_finish: function() {
