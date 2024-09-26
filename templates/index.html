@@ -14,16 +14,35 @@
 <script>
     console.log("Iniciando el test de Stroop");
 
-    // Definir los estímulos (palabras y colores)
+    // Definir todas las combinaciones de palabra y color
     var stroop_trials = [
+        // Palabra Rojo
         { stimulus: 'Rojo', color: 'red', data: {correct_response: 'r'} },
+        { stimulus: 'Rojo', color: 'yellow', data: {correct_response: 'a'} },
+        { stimulus: 'Rojo', color: 'green', data: {correct_response: 'v'} },
+        { stimulus: 'Rojo', color: 'purple', data: {correct_response: 'm'} },
+
+        // Palabra Verde
+        { stimulus: 'Verde', color: 'red', data: {correct_response: 'r'} },
+        { stimulus: 'Verde', color: 'yellow', data: {correct_response: 'a'} },
         { stimulus: 'Verde', color: 'green', data: {correct_response: 'v'} },
+        { stimulus: 'Verde', color: 'purple', data: {correct_response: 'm'} },
+
+        // Palabra Morado
+        { stimulus: 'Morado', color: 'red', data: {correct_response: 'r'} },
+        { stimulus: 'Morado', color: 'yellow', data: {correct_response: 'a'} },
+        { stimulus: 'Morado', color: 'green', data: {correct_response: 'v'} },
         { stimulus: 'Morado', color: 'purple', data: {correct_response: 'm'} },
-        { stimulus: 'Amarillo', color: 'yellow', data: {correct_response: 'a'} }
+
+        // Palabra Amarillo
+        { stimulus: 'Amarillo', color: 'red', data: {correct_response: 'r'} },
+        { stimulus: 'Amarillo', color: 'yellow', data: {correct_response: 'a'} },
+        { stimulus: 'Amarillo', color: 'green', data: {correct_response: 'v'} },
+        { stimulus: 'Amarillo', color: 'purple', data: {correct_response: 'm'} }
     ];
 
     // Barajar los estímulos para mayor variabilidad
-    stroop_trials = jsPsych.randomization.repeat(stroop_trials, 5);
+    stroop_trials = jsPsych.randomization.repeat(stroop_trials, 1); // Presentar cada estímulo una vez
 
     // Configurar la tarea de Stroop
     var stroop_task = {
