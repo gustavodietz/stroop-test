@@ -17,9 +17,9 @@
     // Definir los estímulos (palabras y colores)
     var stroop_trials = [
         { stimulus: 'Rojo', color: 'red', data: {correct_response: 'r'} },
-        { stimulus: 'Verde', color: 'green', data: {correct_response: 'g'} },
-        { stimulus: 'Azul', color: 'blue', data: {correct_response: 'b'} },
-        { stimulus: 'Amarillo', color: 'yellow', data: {correct_response: 'y'} }
+        { stimulus: 'Verde', color: 'green', data: {correct_response: 'v'} },
+        { stimulus: 'Morado', color: 'purple', data: {correct_response: 'm'} },
+        { stimulus: 'Amarillo', color: 'yellow', data: {correct_response: 'a'} }
     ];
 
     // Barajar los estímulos para mayor variabilidad
@@ -32,7 +32,7 @@
             var trial = jsPsych.timelineVariable('stimulus');
             return '<div style="font-size: 40px; color:'+jsPsych.timelineVariable('color', true)+';">'+trial+'</div>';
         },
-        choices: ['r', 'g', 'b', 'y'],
+        choices: ['r', 'v', 'm', 'a'],
         data: function() {
             return jsPsych.timelineVariable('data');
         },
@@ -52,13 +52,29 @@
         choices: ['Finalizar']
     };
 
+    // Instrucciones detalladas del test
+    var instructions = {
+        type: 'html-keyboard-response',
+        stimulus: `
+            <h2>Instrucciones del Test de Stroop</h2>
+            <p>En este test, verás palabras que representan diferentes colores escritas en colores que pueden o no coincidir con el significado de la palabra.</p>
+            <p>Tu tarea es responder lo más rápido y preciso posible indicando el color en el que está escrita la palabra, ignorando el significado de la palabra.</p>
+            <p>Usa las siguientes teclas para indicar el color:</p>
+            <ul>
+                <li><strong>Rojo</strong>: Presiona la tecla <strong>R</strong></li>
+                <li><strong>Verde</strong>: Presiona la tecla <strong>V</strong></li>
+                <li><strong>Morado</strong>: Presiona la tecla <strong>M</strong></li>
+                <li><strong>Amarillo</strong>: Presiona la tecla <strong>A</strong></li>
+            </ul>
+            <p>Presiona cualquier tecla para comenzar el test.</p>
+        `
+    };
+
     // Crear el timeline del experimento
     var timeline = [];
 
-    timeline.push({
-        type: 'html-keyboard-response',
-        stimulus: '<p>Bienvenido al Test de Stroop.</p><p>Presiona cualquier tecla para comenzar.</p>'
-    });
+    // Añadir las instrucciones al inicio
+    timeline.push(instructions);
     
     timeline.push({
         timeline: [stroop_task],
