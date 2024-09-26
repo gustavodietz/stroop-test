@@ -3,43 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test de Stroop</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Test de Stroop con jsPsych</title>
+    <script src="https://cdn.jsdelivr.net/npm/jspsych@7.0.0/jspsych.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/jspsych@7.0.0/css/jspsych.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <h1>Test de Stroop</h1>
-        <form id="stroop-form">
-            <label for="n_pruebas">Número de pruebas:</label>
-            <input type="number" id="n_pruebas" name="n_pruebas" value="10">
-            <button type="submit">Comenzar</button>
-        </form>
-        
-        <div id="resultados"></div>
-    </div>
 
-    <script>
-        document.getElementById('stroop-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const n_pruebas = document.getElementById('n_pruebas').value;
+<script>
+    // Definir los estímulos (palabras y colores)
+    var stroop_trials = [
+        { stimulus: 'Rojo', color: 'red', data: {correct_response: 'r'} },
+        { stimulus: 'Verde', color: 'green', data: {correct_response: 'g'} },
+        { stimulus: 'Azul', color: 'blue', data: {correct_response: 'b'} },
+        { stimulus: 'Amarillo', color: 'yellow', data: {correct_response: 'y'} }
+    ];
 
-            fetch('/stroop-test', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `n_pruebas=${n_pruebas}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                let output = '<h2>Resultados:</h2><ul>';
-                data.forEach(result => {
-                    output += `<li>Palabra: ${result.palabra}, Color: ${result.color_real}, Respuesta: ${result.respuesta}, Correcto: ${result.correcto}, Tiempo: ${result.tiempo_reaccion.toFixed(2)} seg</li>`;
-                });
-                output += '</ul>';
-                document.getElementById('resultados').innerHTML = output;
-            });
-        });
-    </script>
+    // Barajar los estímulos para mayor variabilidad
+    stroop_trials = jsPsych.randomization.repeat(stroop_trials, 5);
+
+    // Configurar la tarea de Stroop
+    var stroop_task = {
+        type: 'html-keyboard-response',
+        stimulus: function() {
+            var trial = jsPsych.timelineVariable('stimulus');
+            return '<div style="font-size: 40px; color:'+trial.color+';">'+trial.stimulus+'</div>';
+        },
+        choices: ['r', 'g', 'b', 'y'],
+        data: function() {
+            return jsPsych.timelineVariable('data');
+        },
+        on_finish: function(data) {
+            data.correct = data.response == data.correct_response;
+        }
+    };
+
+    // Mostrar los resultados al final
+    var display_results = {
+        type: 'html-button-response',
+        stimulus: function() {
+            var correct_trials = jsPsych.data.get().filter({correct: true}).count();
+            var total_trials = jsPsych.data.get().count();
+            return '<p>Terminaste el test.</p><p>Respuestas correctas: ' + correct_trials + ' de ' + total_trials + '</p>';
+        },
+        choices: ['Finalizar']
+    };
+
+    // Crear el timeline del experimento
+    var timeline = [];
+
+    timeline.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p>Bienvenido al Test de Stroop.</p><p>Presiona cualquier tecla para comenzar.</p>'
+    });
+    
+    timeline.push({
+        timeline: [stroop_task],
+        timeline_variables: stroop_trials
+    });
+
+    timeline.push(display_results);
+
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            jsPsych.data.displayData();  // Mostrar los datos al final
+        }
+    });
+</script>
+
 </body>
 </html>
