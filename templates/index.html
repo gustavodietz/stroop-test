@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Stroop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Test de Stroop</h1>
+        <form id="stroop-form">
+            <label for="n_pruebas">Número de pruebas:</label>
+            <input type="number" id="n_pruebas" name="n_pruebas" value="10">
+            <button type="submit">Comenzar</button>
+        </form>
+        
+        <div id="resultados"></div>
+    </div>
+
+    <script>
+        document.getElementById('stroop-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const n_pruebas = document.getElementById('n_pruebas').value;
+
+            fetch('/stroop-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `n_pruebas=${n_pruebas}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                let output = '<h2>Resultados:</h2><ul>';
+                data.forEach(result => {
+                    output += `<li>Palabra: ${result.palabra}, Color: ${result.color_real}, Respuesta: ${result.respuesta}, Correcto: ${result.correcto}, Tiempo: ${result.tiempo_reaccion.toFixed(2)} seg</li>`;
+                });
+                output += '</ul>';
+                document.getElementById('resultados').innerHTML = output;
+            });
+        });
+    </script>
+</body>
+</html>
