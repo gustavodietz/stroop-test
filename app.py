@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import random
 import time
+import os
 
 app = Flask(__name__)
 
@@ -46,4 +47,13 @@ def stroop_test():
     return jsonify(resultados)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Obtiene el puerto de la variable de entorno
+    app.run(host='0.0.0.0', port=port)        # Escucha en todas las IPs
+
+
+  
+
+
+
+
+
